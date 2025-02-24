@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BloodCare - Blood Bank Management</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #dc2626;
+            --secondary: #ef4444;
+            --accent: #fecaca;
+            --background: #fef2f2;
+        }
+
+        body {
+            background-color: var(--background);
+            overflow-x: hidden;
+        }
+
+        .navbar {
+            background: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: var(--primary);
+            cursor: pointer;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.25rem;
+        }
+        
+
+        .nav-button {
+            padding: 0.625rem 1.75rem;
+            border-radius: 9999px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            
+        }
+
+        .adminlogin-btn {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            text-decoration: none;
+    		outline: none;
+        }
+
+        .adminlogin-btn:hover {
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+    		outline: none;
+        }
+
+        .userlogin-btn {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            text-decoration: none;
+    		outline: none;
+        }
+
+        .userlogin-btn:hover {
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+    		outline: none;
+        }
+
+        .register-btn {
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+    		outline: none;
+        }
+
+        .register-btn:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(220, 38, 38, 0.2);
+            text-decoration: none;
+    		outline: none;
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 0 6rem;
+            margin-top: 4rem;
+            gap: 4rem;
+        }
+
+        .hero-content {
+            flex: 1;
+            animation: slideInLeft 1s ease-out;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            color: #1f2937;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: #4b5563;
+            margin-bottom: 2.5rem;
+            line-height: 1.6;
+            max-width: 600px;
+        }
+
+        .cta-button {
+            padding: 1.25rem 2.5rem;
+            font-size: 1.125rem;
+            border-radius: 9999px;
+            border: none;
+            background: var(--primary);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(220, 38, 38, 0.2);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px -3px rgba(220, 38, 38, 0.3);
+        }
+
+        .hero-image {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            animation: slideInRight 1s ease-out;
+        }
+
+        .stats-container {
+            padding: 0 6rem;
+            margin-top: -4rem;
+        }
+
+        .stats {
+            background: white;
+            padding: 3rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-around;
+            gap: 2rem;
+        }
+
+        .stat-item {
+            text-align: center;
+            animation: fadeIn 1s ease-out;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            color: var(--primary);
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #4b5563;
+            font-size: 1.125rem;
+            font-weight: 500;
+        }
+
+        @keyframes slideInLeft {
+            from { transform: translateX(-100px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 1024px) {
+            .hero {
+                padding: 0 4rem;
+                gap: 2rem;
+            }
+
+            .hero h1 {
+                font-size: 3rem;
+            }
+
+            .stats-container {
+                padding: 0 4rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero {
+                flex-direction: column;
+                padding: 2rem;
+                text-align: center;
+                gap: 3rem;
+            }
+
+            .hero-content {
+                margin-top: 2rem;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero p {
+                margin: 0 auto 2rem auto;
+            }
+
+            .stats-container {
+                padding: 0 2rem;
+                margin-top: 2rem;
+            }
+
+            .stats {
+                flex-direction: column;
+                text-align: center;
+                padding: 2rem;
+            }
+
+            .nav-links {
+                gap: 0.75rem;
+            }
+
+            .nav-button {
+                padding: 0.5rem 1.25rem;
+                font-size: 0.875rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+        	<a th:href="@{/}"></a>
+            <i class="fas fa-heartbeat"></i>
+            <span>BloodCare</span>
+        </div>
+        <div class="nav-links">
+            <a class="nav-button adminlogin-btn" th:href="@{/adminLogin}">Admin Login</a>
+            <a class="nav-button userlogin-btn" th:href="@{/userLogin}">User Login</a>
+            <a class="nav-button register-btn" th:href="@{/userRegister}">Register</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Every Drop of Blood Saves a Life</h1>
+            <p>Join our community of blood donors and help save lives. Your contribution can make a significant difference in someone's journey to recovery.</p>
+            <button class="cta-button" onclick="window.location.href='UserRegister.html'">Become a Donor</button>
+        </div>
+        <div class="hero-image">
+            <svg viewBox="0 0 24 24" width="400" height="400" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 21C16.4183 21 20 17.4183 20 13C20 10.25 18 7.5 16 5.5C14 3.5 12 2 12 2C12 2 10 3.5 8 5.5C6 7.5 4 10.25 4 13C4 17.4183 7.58172 21 12 21Z" fill="#dc2626"/>
+                <path d="M12 21C14.4853 21 16.5 18.9853 16.5 16.5C16.5 14.7 15.5 13 14.5 12C13.5 11 12 10 12 10C12 10 10.5 11 9.5 12C8.5 13 7.5 14.7 7.5 16.5C7.5 18.9853 9.51472 21 12 21Z" fill="#ef4444"/>
+            </svg>
+        </div>
+    </section>
+
+    <div class="stats-container">
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-number">15,000+</div>
+                <div class="stat-label">Lives Impacted</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">7,500+</div>
+                <div class="stat-label">Regular Donors</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">100+</div>
+                <div class="stat-label">Partner Hospitals</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.addEventListener('scroll', () => {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.style.padding = '0.75rem 2rem';
+                navbar.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)';
+            } else {
+                navbar.style.padding = '1rem 2rem';
+                navbar.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BloodCare - User Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #dc2626;
+            --secondary: #ef4444;
+            --accent: #fecaca;
+            --background: #fef2f2;
+            --card-bg: #ffffff;
+            --text: #1f2937;
+            --text-light: #6b7280;
+            --border: #fee2e2;
+        }
+
+        body {
+            background: var(--background);
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: var(--card-bg);
+            padding: 1rem 2rem;
+            box-shadow: 0 4px 6px -1px rgba(220, 38, 38, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .user-email {
+            color: var(--text-light);
+            font-size: 0.875rem;
+        }
+
+        .logout-btn {
+            padding: 0.625rem 1.75rem;
+            border-radius: 9999px;
+            border: 2px solid var(--primary);
+            background: transparent;
+            color: var(--primary);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .logout-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: var(--card-bg);
+            height: 100vh;
+            padding: 1.5rem 0;
+            position: fixed;
+            top: 70px;
+            border-right: 1px solid var(--border);
+        }
+
+        .menu-item {
+            padding: 0.875rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--text-light);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            margin: 0.25rem 0.75rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+        }
+
+        .menu-item:hover, .menu-item.active {
+            background: var(--primary);
+            color: white;
+            transform: translateX(4px);
+        }
+
+        .menu-item.active {
+            background: var(--primary);
+            color: white;
+            position: relative;
+        }
+
+        .menu-item.active::before {
+            content: '';
+            position: absolute;
+            left: -0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            height: 2rem;
+            width: 4px;
+            background: var(--primary);
+            border-radius: 0 4px 4px 0;
+        }
+
+        .main-content {
+            margin-left: 280px;
+            padding: 2rem;
+            margin-top: 70px;
+        }
+
+        .dashboard-title {
+            color: var(--text);
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+        }
+
+        .blood-types-container {
+            background: var(--card-bg);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(220, 38, 38, 0.1);
+        }
+
+        .blood-types-row {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .blood-type-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1rem;
+            border: 2px solid var(--border);
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .blood-type-item:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .blood-type {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .blood-count {
+            font-size: 0.875rem;
+            color: var(--text-light);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 6px -1px rgba(220, 38, 38, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--accent);
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 1.5rem;
+        }
+
+        .stat-info {
+            flex: 1;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            color: var(--text-light);
+            font-size: 0.875rem;
+        }
+
+        @media (max-width: 1024px) {
+            .blood-types-row {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 70px;
+            }
+            
+            .menu-item span:last-child {
+                display: none;
+            }
+            
+            .main-content {
+                margin-left: 70px;
+                padding: 1rem;
+            }
+
+            .blood-types-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fas fa-heartbeat"></i>
+            <span>BloodCare</span>
+        </div>
+        <div class="user-info">
+            <span class="user-email" th:text="${loggedUserName}" ></span>
+            <a th:href="@{/userLogout}" class="logout-btn">Logout</a>
+        </div>
+    </nav>
+
+    <aside class="sidebar">
+        <a th:href="@{/user/dashboard}" class="menu-item active">
+            <i class="fas fa-home"></i>
+            <span>Dashboard</span>
+        </a>
+        <a th:href="@{/registerAsDonor}" class="menu-item">
+            <i class="fas fa-user-plus"></i>
+            <span>Register As Donor</span>
+        </a>
+        <a th:href="@{/requestBlood}" class="menu-item">
+            <i class="fas fa-hand-holding-medical"></i>
+            <span>Make Blood Request</span>
+        </a>
+        <a th:href="@{/donateBlood}" class="menu-item">
+            <i class="fas fa-tint"></i>
+            <span>Donate Blood</span>
+        </a>
+        <a th:href="@{/donorList}" class="menu-item">
+            <i class="fas fa-users"></i>
+            <span>Available Donors</span>
+        </a>
+        <a th:href="@{/bloodStock}" class="menu-item">
+            <i class="fas fa-warehouse"></i>
+            <span>Blood Stock</span>
+        </a>
+        <a th:href="@{/requesthistoryfromuser}" class="menu-item">
+            <i class="fas fa-history"></i>
+            <span>Request History</span>
+        </a>
+	    <a th:href="@{/donationHistoryFromUser}" class="menu-item">
+	        <i class="fas fa-history"></i>
+	        <span>Blood Donation History</span>
+	    </a>
+        <a th:href="@{/editProfile}" class="menu-item">
+            <i class="fas fa-user-edit"></i>
+            <span>Edit Profile</span>
+        </a>
+    </aside>
+
+    <main class="main-content">
+
+        <h1 class="dashboard-title" th:text="${'Welcome, ' + loggedUserName}">Welcome to User Dashboard</h1>
+
+        <div class="blood-types-container">
+            <div class="blood-types-row">
+                <div th:each="bloodStock : ${bloodStocks}" class="blood-type-item">
+                    <div class="blood-type" th:text="${bloodStock.bloodGroup}" >A+</div>
+                    <div class="blood-count" th:text="${bloodStock.unitsAvailable + ' units'}" >6 units</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-value" th:text="${totalDonors}" >125</div>
+                    <div class="stat-label">Total Donors</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-value" th:text="${userTotalRequests}" >7</div>
+                    <div class="stat-label">Your Total Requests</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-tint"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-value" th:text="${userTotalDonations}" >12</div>
+                    <div class="stat-label">Your Total Blood Donations</div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-tint"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-value" th:text="${totalUnitsDonatedByUser}" >39</div>
+                    <div class="stat-label">Your Total Blood Units Donates In ML</div>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BloodCare - User Login</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #dc2626;
+            --secondary: #ef4444;
+            --accent: #fecaca;
+            --background: #fef2f2;
+        }
+
+        body {
+            background-color: var(--background);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .navbar {
+            background: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: var(--primary);
+            cursor: pointer;
+            text-decoration: none;
+    		outline: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.25rem;
+        }
+
+        .nav-button {
+            padding: 0.625rem 1.75rem;
+            border-radius: 9999px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .login-btn {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            text-decoration: none;
+    		outline: none;
+        }
+
+        .login-btn:hover {
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+    		outline: none;
+        }
+
+        .page-container {
+            display: flex;
+            margin-top: 64px;
+            min-height: calc(100vh - 64px);
+        }
+
+        .login-side {
+            width: 60%;
+            min-height: 100%;
+            padding: 2rem;
+            background: var(--background);
+            display: flex;
+            align-items: center;
+        }
+
+        .hero-side {
+            position: fixed;
+            right: 0;
+            width: 40%;
+            height: calc(100vh - 64px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            animation: fadeIn 1s ease-out;
+        }
+
+        .login-container {
+            max-width: 500px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 2.5rem;
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            animation: slideInLeft 0.5s ease-out;
+        }
+
+        .form-title {
+            text-align: center;
+            color: var(--primary);
+            font-size: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #374151;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--accent);
+        }
+
+        .help-text {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-top: 0.25rem;
+        }
+
+        .login-btn-submit {
+            width: 100%;
+            padding: 1rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 1rem;
+        }
+
+        .login-btn-submit:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        .register-link {
+            text-align: center;
+            color: #4b5563;
+        }
+
+        .register-link a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            text-decoration: none;
+    		outline: none;
+        }
+
+        .register-link a:hover {
+            text-decoration: underline;
+            text-decoration: none;
+    		outline: none;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideInLeft {
+            from { transform: translateX(-50px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @media (max-width: 1024px) {
+            .hero-side {
+                width: 35%;
+            }
+            .login-side {
+                width: 65%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-side {
+                display: none;
+            }
+            .login-side {
+                width: 100%;
+                padding: 1rem;
+            }
+            .login-container {
+                padding: 2rem;
+            }
+            .nav-button {
+                padding: 0.5rem 1.25rem;
+                font-size: 0.875rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a class="logo" th:href="@{/}">
+    		<div>
+	            <i class="fas fa-heartbeat"></i>
+	            <span>BloodCare</span>
+	        </div>
+    	</a>
+        <div class="nav-links">
+            <a th:href="@{/adminLogin}" class="nav-button login-btn">Admin Login</a>
+            <a th:href="@{/userRegister}" class="nav-button login-btn">Register</a>
+        </div>
+    </nav>
+
+    <div class="page-container">
+        <div class="login-side">
+            <div class="login-container">
+                <h2 class="form-title">User Login</h2>
+                <form th:action="@{/user/login-form}" th:object="${user}" method="post">
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" th:field="*{email}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" th:field="*{password}" required>
+                    </div>
+
+                    <button type="submit" class="login-btn-submit">Login</button>
+
+                    <div class="register-link">
+                        Don't have an account? <a th:href="@{/userRegister}">Register here</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="hero-side">
+            <svg viewBox="0 0 24 24" width="400" height="400" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 21C16.4183 21 20 17.4183 20 13C20 10.25 18 7.5 16 5.5C14 3.5 12 2 12 2C12 2 10 3.5 8 5.5C6 7.5 4 10.25 4 13C4 17.4183 7.58172 21 12 21Z" fill="#dc2626"/>
+                <path d="M12 21C14.4853 21 16.5 18.9853 16.5 16.5C16.5 14.7 15.5 13 14.5 12C13.5 11 12 10 12 10C12 10 10.5 11 9.5 12C8.5 13 7.5 14.7 7.5 16.5C7.5 18.9853 9.51472 21 12 21Z" fill="#ef4444"/>
+            </svg>
+        </div>
+    </div>
+</body>
+</html>

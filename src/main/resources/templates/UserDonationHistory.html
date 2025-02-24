@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Donation History</title>
+  <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    rel="stylesheet"
+  />
+  <style>
+    /* Global Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    /* CSS Variables for Theme Colors */
+    :root {
+      --primary: #dc2626;
+      --secondary: #ef4444;
+      --accent: #fecaca;
+      --background: #fef2f2;
+      --card-bg: #ffffff;
+      --text: #1f2937;
+      --text-light: #6b7280;
+      --border: #fee2e2;
+      --success: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+    }
+    
+    body {
+      background: var(--background);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    
+    /* Navbar Styles */
+    .navbar {
+      background: var(--card-bg);
+      padding: 1rem 2rem;
+      box-shadow: 0 4px 6px -1px rgba(220, 38, 38, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 1000;
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 1.75rem;
+      font-weight: 600;
+      color: var(--primary);
+    }
+    
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+    
+    .user-email {
+      color: var(--text-light);
+      font-size: 0.875rem;
+    }
+    
+    .logout-btn {
+      padding: 0.625rem 1.75rem;
+      border-radius: 9999px;
+      border: 2px solid var(--primary);
+      background: transparent;
+      color: var(--primary);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+    }
+    
+    .logout-btn:hover {
+      background: var(--primary);
+      color: #fff;
+    }
+    
+    /* Sidebar Styles */
+    .sidebar {
+      width: 280px;
+      background: var(--card-bg);
+      height: calc(100vh - 70px);
+      padding: 1.5rem 0;
+      position: fixed;
+      top: 70px;
+      left: 0;
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+    }
+    
+    .menu-item {
+      padding: 0.875rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      color: var(--text-light);
+      text-decoration: none;
+      transition: all 0.3s ease;
+      margin: 0.25rem 0.75rem;
+      border-radius: 0.5rem;
+      font-weight: 500;
+    }
+    
+    .menu-item:hover,
+    .menu-item.active {
+      background: var(--primary);
+      color: #fff;
+      transform: translateX(4px);
+    }
+    
+    /* Main Content Styles */
+    .main-content {
+      padding: 2rem;
+      margin: 90px 2rem 2rem 300px;
+      background: var(--background);
+      min-height: calc(100vh - 90px);
+    }
+    
+    .dashboard-title {
+      color: var(--text);
+      font-size: 2rem;
+      font-weight: 600;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+    
+    /* Table Styles */
+    .request-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+    
+    .request-table thead {
+      background: var(--primary);
+      color: #fff;
+    }
+    
+    .request-table th,
+    .request-table td {
+      padding: 1rem;
+      text-align: center;
+      border: 1px solid var(--border);
+    }
+    
+    .request-table th {
+      font-size: 1rem;
+      font-weight: 600;
+    }
+    
+    .request-table td {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text-light);
+    }
+    
+    .request-table tbody tr:hover {
+      background: var(--accent);
+      transition: background 0.3s ease;
+    }
+    
+    /* Status Badge Styles */
+    .status-badge {
+      padding: 0.5rem 1rem;
+      border-radius: 9999px;
+      font-weight: 600;
+      display: inline-block;
+      color: #fff;
+    }
+    
+    .status-accepted {
+      background: var(--success);
+    }
+    
+    .status-rejected {
+      background: var(--danger);
+    }
+    
+    .status-pending {
+      background: var(--warning);
+    }
+    
+    /* Pagination Styles */
+    .pagination {
+      margin-top: 1rem;
+      text-align: center;
+    }
+    
+    .page-link {
+      margin: 0 0.5rem;
+      padding: 0.5rem 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      text-decoration: none;
+      color: var(--text-light);
+      transition: background 0.3s ease, color 0.3s ease;
+      cursor: pointer;
+    }
+    
+    .page-link:hover,
+    .page-link.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+    
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 240px;
+      }
+      .main-content {
+        margin-left: 260px;
+      }
+    }
+    
+    @media (max-width: 576px) {
+      .navbar {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      .sidebar {
+        display: none;
+      }
+      .main-content {
+        margin: 90px 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="logo">
+      <i class="fas fa-heartbeat"></i>
+      <span>BloodCare</span>
+    </div>
+    <div class="user-info">
+      <span class="user-email" th:text="${loggedUserName}">user@bloodcare.com</span>
+      <a th:href="@{/userLogout}" class="logout-btn">Logout</a>
+    </div>
+  </nav>
+  
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <a th:href="@{/user/dashboard}" class="menu-item">
+      <i class="fas fa-home"></i>
+      <span>Dashboard</span>
+    </a>
+    <a th:href="@{/registerAsDonor}" class="menu-item">
+      <i class="fas fa-user-plus"></i>
+      <span>Register As Donor</span>
+    </a>
+    <a th:href="@{/requestBlood}" class="menu-item">
+      <i class="fas fa-hand-holding-medical"></i>
+      <span>Make Blood Request</span>
+    </a>
+    <a th:href="@{/donateBlood}" class="menu-item">
+      <i class="fas fa-tint"></i>
+      <span>Donate Blood</span>
+    </a>
+    <a th:href="@{/donorList}" class="menu-item">
+      <i class="fas fa-users"></i>
+      <span>Available Donors</span>
+    </a>
+    <a th:href="@{/bloodStock}" class="menu-item">
+      <i class="fas fa-warehouse"></i>
+      <span>Blood Stock</span>
+    </a>
+    <a th:href="@{/requesthistoryfromuser}" class="menu-item">
+      <i class="fas fa-history"></i>
+      <span>Request History</span>
+    </a>
+    <a th:href="@{/donationHistoryFromUser}" class="menu-item active">
+        <i class="fas fa-history"></i>
+        <span>Blood Donation History</span>
+    </a>
+    <a th:href="@{/editProfile}" class="menu-item">
+      <i class="fas fa-user-edit"></i>
+      <span>Edit Profile</span>
+    </a>
+  </aside>
+  
+  <!-- Main Content -->
+  <main class="main-content">
+    <h1 class="dashboard-title">Overall Donation History</h1>
+    <table class="request-table">
+      <thead>
+        <tr>
+          <th>NAME</th>
+          <th>MOBILE</th>
+          <th>GENDER</th>
+          <th>BLOOD GROUP</th>
+          <th>CITY</th>
+          <th>DONATED UNITS</th>
+          <th>DONATION DATE</th>
+          <th>STATUS</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody">
+        <tr th:each="donation : ${donations}">
+            <td th:text="${donation.name}"></td>
+            <td th:text="${donation.mobile}"></td>
+            <td th:text="${donation.gender}"></td>
+            <td th:text="${donation.bloodGroup}"></td>
+            <td th:text="${donation.city}"></td>
+            <td th:text="${donation.unitsDonated}"></td>
+            <td th:text="${donation.donationDate}"></td>
+            <td>
+                <span th:class="'status-badge ' + ${donation.status == 'Accepted' ? 'status-accepted' : donation.status == 'Rejected' ? 'status-rejected' : 'status-pending'}"
+                      th:text="${donation.status}"></span>
+            </td>
+        </tr>
+      </tbody>
+    </table>
+  </main>
+</body>
+</html>

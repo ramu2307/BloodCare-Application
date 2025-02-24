@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BloodCare - Manage Users List</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #dc2626;
+            --secondary: #ef4444;
+            --accent: #fecaca;
+            --background: #fef2f2;
+            --card-bg: #ffffff;
+            --text: #1f2937;
+            --text-light: #6b7280;
+            --border: #fee2e2;
+        }
+
+        body {
+            background: var(--background);
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: var(--card-bg);
+            padding: 1rem 2rem;
+            box-shadow: 0 4px 6px -1px rgba(220, 38, 38, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .search-container {
+            flex: 1;
+            max-width: 500px;
+            margin: 0 2rem;
+            position: relative;
+        }
+
+        .search-bar {
+            width: 100%;
+            padding: 0.625rem 2.5rem;
+            border: 2px solid var(--border);
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            color: var(--text);
+            transition: all 0.3s ease;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+        }
+
+        .search-bar:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--accent);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .user-email {
+            color: var(--text-light);
+            font-size: 0.875rem;
+        }
+
+        .logout-btn {
+            padding: 0.625rem 1.75rem;
+            border-radius: 9999px;
+            border: 2px solid var(--primary);
+            background: transparent;
+            color: var(--primary);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .logout-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: var(--card-bg);
+            height: 100vh;
+            padding: 1.5rem 0;
+            position: fixed;
+            top: 70px;
+            border-right: 1px solid var(--border);
+        }
+
+        .menu-item {
+            padding: 0.875rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--text-light);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            margin: 0.25rem 0.75rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+        }
+
+        .menu-item:hover, .menu-item.active {
+            background: var(--primary);
+            color: white;
+            transform: translateX(4px);
+        }
+
+        .main-content {
+            margin-left: 280px;
+            padding: 2rem;
+            margin-top: 70px;
+            max-width: 1200px;
+            margin-right: auto;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .add-user-btn {
+            padding: 0.75rem 1.5rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .add-user-btn:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        .manageusers-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 5rem;
+            max-width: 1100px;
+        }
+
+        .manageusers-card {
+            background: var(--card-bg);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            border: 1px solid var(--border);
+            display: flex;
+            gap: 2rem;
+            transition: all 0.3s ease;
+            min-width: 400px;
+            position: relative;
+        }
+
+        .manageusers-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px -10px rgba(220, 38, 38, 0.2);
+        }
+
+        .manageusers-avatar {
+            width: 100px;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--accent);
+            border-radius: 1rem;
+            color: var(--primary);
+            font-size: 2.5rem;
+            margin-top: 10px;
+        }
+
+        .manageusers-info {
+            flex: 1;
+        }
+
+        .card-actions {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            display: flex;
+            gap: 0.75rem;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+        }
+
+        .manageusers-card:hover .card-actions {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .action-btn {
+            padding: 0.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 2.5rem;
+            height: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--card-bg);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .edit-btn {
+            color: #059669;
+            border: 2px solid #059669;
+        }
+
+        .edit-btn:hover {
+            background: #059669;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .delete-btn {
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .delete-btn:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .info-row.editing {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .edit-input {
+            flex: 1;
+            padding: 0.5rem;
+            border: 2px solid var(--border);
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            transition: all 0.3s ease;
+        }
+
+        .edit-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--accent);
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 1rem;
+            height: 600px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            overflow-y: auto;
+             /* Firefox scrollbar */
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary) var(--background);
+        }
+
+        /* Webkit scrollbar styling */
+        .modal::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .modal::-webkit-scrollbar-track {
+            background: var(--background);
+            border-radius: 8px;
+        }
+
+        .modal::-webkit-scrollbar-thumb {
+            background-color: var(--primary);
+            border-radius: 8px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-light);
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--border);
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--accent);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .submit-btn:hover {
+            background: var(--secondary);
+        }
+
+        .info-row {
+            margin-bottom: 0.75rem;
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .info-label {
+            color: var(--text);
+            font-weight: 600;
+            min-width: 100px;
+        }
+
+        .info-value {
+            color: var(--text-light);
+        }
+
+        .blood-group {
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 1.125rem;
+        }
+
+        @media (max-width: 1200px) {
+            .manageusers-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 70px;
+            }
+            
+            .menu-item span:last-child {
+                display: none;
+            }
+            
+            .main-content {
+                margin-left: 70px;
+                padding: 1rem;
+            }
+            
+            .search-container {
+                margin: 0 1rem;
+            }
+
+            .manageusers-card {
+                min-width: unset;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fas fa-heartbeat"></i>
+            <span>BloodCare</span>
+        </div>
+        <div th:if="${not editMode}" class="search-container">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" class="search-bar" placeholder="Search users by blood group...">
+        </div>
+        <div class="user-info">
+            <span class="user-email" th:text="${loggedAdminName}">admin@bloodcare.com</span>
+            <a th:href="@{/adminLogout}" class="logout-btn">Logout</a>
+        </div>
+    </nav>
+    
+    <aside class="sidebar">
+        <a th:href="@{/adminDashboard}" class="menu-item">
+            <i class="fas fa-home"></i>
+            <span>Dashboard</span>
+        </a>
+        <a th:href="@{/adminBloodRequests}" class="menu-item">
+            <i class="fas fa-clipboard-list"></i>
+            <span>Blood Requests</span>
+        </a>
+        <a th:href="@{/adminBloodDonationsRequests}" class="menu-item">
+            <i class="fas fa-clipboard-list"></i>
+            <span>Donate Requests</span>
+        </a>
+        <a th:href="@{/bloodHistory/active}" class="menu-item">
+            <i class="fas fa-hospital-user"></i>
+            <span>Requests History</span>
+        </a>
+        <a th:href="@{/adminManagesUsers}" class="menu-item active">
+            <i class="fas fa-hospital-user"></i>
+            <span>Manage Users</span>
+        </a>
+    </aside>
+
+    <main th:if="${showMode}" class="main-content">
+	    <div class="page-header">
+	        <h1 class="page-title">Manage Users</h1>
+	        <a class="add-user-btn" th:href="@{/adminAddUsers}">
+	            <i class="fas fa-plus"></i>
+	            Add User
+	        </a>
+	    </div>
+	    <div class="manageusers-grid">
+	        <div th:each="user : ${users}" class="manageusers-card">
+	            <div class="card-actions">
+	                <button class="action-btn edit-btn" title="Edit User">
+	                    <i class="fas fa-edit"></i>
+	                </button>
+	                <a th:href="@{/users/delete/{userId}(userId=${user.userId})}" class="action-btn delete-btn" title="Delete User">
+	                    <i class="fas fa-trash"></i>
+	                </a>
+	            </div>
+	            <div class="manageusers-info">
+	                <div class="info-row">
+	                    <span class="info-label">Name:</span>
+	                    <span class="info-value" th:text="${user.username}">Name</span>
+	                </div>
+	                <div class="info-row">
+	                    <span class="info-label">Blood Group:</span>
+	                    <span class="blood-group" th:text="${user.bloodGroup}">Blood Group</span>
+	                </div>
+	                <div class="info-row">
+	                    <span class="info-label">Gender:</span>
+	                    <span class="info-value" th:text="${user.gender}">Gender</span>
+	                </div>
+	                <div class="info-row">
+	                    <span class="info-label">Age:</span>
+	                    <span class="info-value" th:text="${user.age}">Age</span>
+	                </div>
+	                <div class="info-row">
+	                    <span class="info-label">Contact:</span>
+	                    <span class="info-value" th:text="${user.mobile}">Contact</span>
+	                </div>
+	            </div>
+	            <div class="manageusers-avatar">
+	                <i th:classappend="${user.gender == 'Male' || user.gender == 'male'} ? 'fas fa-male' : 'fas fa-female'"></i>
+	            </div>
+	        </div>
+	    </div>
+	</main>
+
+    <!-- Add User Modal -->
+    <main th:if="${addMode}" class="main-content">
+    	<div class="modal-overlay" id="addUserModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Add New User</h2>
+                <a th:href="@{/adminManagesUsers}" class="close-modal">×</a>
+            </div>
+            <form id="addUserForm" th:action="@{/adminAddUser}" th:object="${user}" method="post">
+                <div class="form-group">
+                    <label class="form-label">Name</label>
+                    <input type="text" class="form-input" th:field="*{username}" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" >Email</label>
+                    <input type="email" class="form-input" th:field="*{email}" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Blood Group</label>
+                    <select class="form-input" th:field="*{bloodGroup}" required>
+                        <option value="">Select Blood Group</option>
+                        <option value="A+">A+</option>
+                        <option value="A-">A-</option>
+                        <option value="B+">B+</option>
+                        <option value="B-">B-</option>
+                        <option value="O+">O+</option>
+                        <option value="O-">O-</option>
+                        <option value="AB+">AB+</option>
+                        <option value="AB-">AB-</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Gender</label>
+                    <select class="form-input" th:field="*{gender}" required>
+                        <option value="">Select Gender</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Age</label>
+                    <input type="number" class="form-input" th:field="*{age}" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Mobile Number</label>
+                    <input type="tel" class="form-input" th:field="*{mobile}" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-input" th:field="*{password}" required>
+                </div>
+                <button type="submit" class="submit-btn">Add User</button>
+            </form>
+        </div>
+    </div>
+    </main>
+
+    <!-- Edit User Modal -->
+    <div th:if="${editMode}" class="modal-overlay" id="editUserModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Edit User</h2>
+                <button class="close-modal" onclick="closeEditModal()">×</button>
+            </div>
+            <form id="editUserForm">
+                <div class="form-group">
+                    <label class="form-label">Name</label>
+                    <input type="text" id="editName" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Blood Group</label>
+                    <input type="text" id="editBloodGroup" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Gender</label>
+                    <input type="text" id="editGender" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Age</label>
+                    <input type="text" id="editAge" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Contact</label>
+                    <input type="text" id="editContact" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Location</label>
+                    <input type="text" id="editLocation" class="form-input" required>
+                </div>
+                <div>
+                    <button type="button" class="submit-btn" onclick="saveUserChanges()">Save</button>
+                    <button type="button" class="submit-btn" onclick="closeEditModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</body>
+</html>

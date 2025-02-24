@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BloodCare - Register as Donor</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #dc2626;
+            --secondary: #ef4444;
+            --accent: #fecaca;
+            --background: #fef2f2;
+            --card-bg: #ffffff;
+            --text: #1f2937;
+            --text-light: #6b7280;
+            --border: #fee2e2;
+        }
+
+        body {
+            background: var(--background);
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: var(--card-bg);
+            padding: 1rem 2rem;
+            box-shadow: 0 4px 6px -1px rgba(220, 38, 38, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .user-email {
+            color: var(--text-light);
+            font-size: 0.875rem;
+        }
+
+        .logout-btn {
+            padding: 0.625rem 1.75rem;
+            border-radius: 9999px;
+            border: 2px solid var(--primary);
+            background: transparent;
+            color: var(--primary);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .logout-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: var(--card-bg);
+            height: 100vh;
+            padding: 1.5rem 0;
+            position: fixed;
+            top: 70px;
+            border-right: 1px solid var(--border);
+        }
+
+        .menu-item {
+            padding: 0.875rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--text-light);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            margin: 0.25rem 0.75rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+        }
+
+        .menu-item:hover, .menu-item.active {
+            background: var(--primary);
+            color: white;
+            transform: translateX(4px);
+        }
+
+        .main-content {
+            margin-left: 280px;
+            padding: 2rem;
+            margin-top: 70px;
+        }
+
+        .donor-form {
+            background: var(--card-bg);
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(220, 38, 38, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .form-title {
+            font-size: 1.5rem;
+            color: var(--text);
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--accent);
+        }
+
+        .donor-register-btn {
+            padding: 0.75rem 2rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .donor-register-btn:hover {
+            background: var(--secondary);
+        }
+
+        .willingness-cards {
+            display: grid; /* Hidden by default */
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .willingness-card {
+            background: var(--card-bg);
+            border-radius: 1rem;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            border: 2px solid var(--border);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .willingness-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            color: var(--primary);
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .willingness-text {
+            color: var(--text);
+            font-weight: 500;
+            margin-top: 1rem;
+        }
+
+        .willingness-card.selected {
+            border-color: var(--primary);
+            background-color: var(--accent);
+        }
+
+        .willingness-card .check-mark {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            color: var(--primary);
+            font-size: 1.5rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .willingness-card.selected .check-mark {
+            opacity: 1;
+        }
+
+        .form-error {
+            color: var(--primary);
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 70px;
+            }
+            
+            .menu-item span:last-child {
+                display: none;
+            }
+            
+            .main-content {
+                margin-left: 70px;
+                padding: 1rem;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .willingness-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .toast {
+        	position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--primary);
+            color: white;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            z-index: 1001;
+        }
+
+        .toast.show {
+           opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fas fa-heartbeat"></i>
+            <span>BloodCare</span>
+        </div>
+        <div class="user-info">
+            <span class="user-email" th:text="${loggedUserName}">user@bloodcare.com</span>
+            <a th:href="@{/userLogout}" class="logout-btn">Logout</a>
+        </div>
+    </nav>
+
+    <aside class="sidebar">
+        <a th:href="@{/user/dashboard}" class="menu-item">
+            <i class="fas fa-home"></i>
+            <span>Dashboard</span>
+        </a>
+        <a th:href="@{/registerAsDonor}" class="menu-item active">
+            <i class="fas fa-user-plus"></i>
+            <span>Register As Donor</span>
+        </a>
+        <a th:href="@{/requestBlood}" class="menu-item">
+            <i class="fas fa-hand-holding-medical"></i>
+            <span>Make Blood Request</span>
+        </a>
+        <a th:href="@{/donateBlood}" class="menu-item">
+            <i class="fas fa-tint"></i>
+            <span>Donate Blood</span>
+        </a>
+        <a th:href="@{/donorList}" class="menu-item">
+            <i class="fas fa-users"></i>
+            <span>Available Donors</span>
+        </a>
+        <a th:href="@{/bloodStock}" class="menu-item">
+            <i class="fas fa-warehouse"></i>
+            <span>Blood Stock</span>
+        </a>
+        <a th:href="@{/requesthistoryfromuser}" class="menu-item">
+            <i class="fas fa-history"></i>
+            <span>Request History</span>
+        </a>
+        <a th:href="@{/donationHistoryFromUser}" class="menu-item">
+	        <i class="fas fa-history"></i>
+	        <span>Blood Donation History</span>
+	    </a>
+        <a th:href="@{/editProfile}" class="menu-item">
+            <i class="fas fa-user-edit"></i>
+            <span>Edit Profile</span>
+        </a>
+    </aside>
+
+    <main class="main-content">
+        <div class="donor-form">
+            <form th:action="@{/donorProfileUpdate}" th:object="${donorProfile}" method="post">
+            	<h2 class="form-title">Complete Your Donor Profile</h2>
+	            <div class="form-grid">
+	                <div class="form-group">
+	                    <label class="form-label">Address</label>
+	                    <input type="text" class="form-input" id="address" th:field="*{address}" placeholder="Enter your full address">
+	                    <div class="form-error" id="address-error">Please enter your address</div>
+	                </div>
+	                <div class="form-group">
+	                    <label class="form-label">City</label>
+	                    <input type="text" class="form-input" id="city" th:field="*{city}" placeholder="Enter your city">
+	                    <div class="form-error" id="city-error">Please enter your city</div>
+	                </div>
+	            </div>
+            	<button class="donor-register-btn">Update Profile</button>
+            </form>
+        </div>
+
+        <div th:if="${hasDonorProfile}" class="willingness-cards" id="willingness-section">
+		    <div class="willingness-card" id="willing-yes" th:classappend="${willingnessStatus == 'yes'} ? 'selected' : ''" onclick="updateWillingness('yes')">
+		        <i class="fas fa-check check-mark"></i>
+		        <div class="willingness-circle">Yes</div>
+		        <div class="willingness-text">Willing to Donate Blood</div>
+		    </div>
+		    <div class="willingness-card" id="willing-no" th:classappend="${willingnessStatus == 'no'} ? 'selected' : ''" onclick="updateWillingness('no')">
+		        <i class="fas fa-check check-mark"></i>
+		        <div class="willingness-circle">No</div>
+		        <div class="willingness-text">Not Willing to Donate Blood</div>
+		    </div>
+		</div>
+    </main>
+    
+    <div id="toast" class="toast" th:if="${successMessage}" th:text="${successMessage}"></div>
+
+    <script>
+	    const toast = document.getElementById('toast');
+	    toast.classList.add('show');
+	    setTimeout(() => {
+	    	toast.classList.remove('show');
+	    }, 3000);
+    
+    </script>
+    
+    <script>
+	    function updateWillingness(status) {
+	        // Remove selected class from both cards
+	        document.getElementById('willing-yes').classList.remove('selected');
+	        document.getElementById('willing-no').classList.remove('selected');
+	
+	        // Add selected class to the clicked card
+	        if (status === 'yes') {
+	            document.getElementById('willing-yes').classList.add('selected');
+	        } else {
+	            document.getElementById('willing-no').classList.add('selected');
+	        }
+	
+	        // Make an AJAX call to update the status in the backend
+	        var xhr = new XMLHttpRequest();
+	        xhr.open("POST", "/updateWillingnessStatus", true);
+	        xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+	        xhr.onreadystatechange = function () {
+	            if (xhr.readyState === 4 && xhr.status === 200) {
+	                console.log("Willingness status updated successfully");
+	            }
+	        };
+	        xhr.send(JSON.stringify({ status: status }));
+	    }
+    </script>
+    
+</body>
+</html>

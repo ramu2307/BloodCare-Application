@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BloodCare - Requests History</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #dc2626;
+            --secondary: #ef4444;
+            --accent: #fecaca;
+            --background: #fef2f2;
+            --card-bg: #ffffff;
+            --text: #1f2937;
+            --text-light: #6b7280;
+            --border: #fee2e2;
+            --success: #10b981;
+            --error: #ef4444;
+		    --danger: #dc3545;  
+		    --warning: #ffc107;
+        }
+
+        body {
+            background: var(--background);
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: var(--card-bg);
+            padding: 1rem 2rem;
+            box-shadow: 0 4px 6px -1px rgba(220, 38, 38, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .user-email {
+            color: var(--text-light);
+            font-size: 0.875rem;
+        }
+
+        .logout-btn {
+            padding: 0.625rem 1.75rem;
+            border-radius: 9999px;
+            border: 2px solid var(--primary);
+            background: transparent;
+            color: var(--primary);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .logout-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: var(--card-bg);
+            height: 100vh;
+            padding: 1.5rem 0;
+            position: fixed;
+            top: 70px;
+            border-right: 1px solid var(--border);
+        }
+
+        .menu-item {
+            padding: 0.875rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--text-light);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            margin: 0.25rem 0.75rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+        }
+
+        .menu-item:hover, .menu-item.active {
+            background: var(--primary);
+            color: white;
+            transform: translateX(4px);
+        }
+
+        .main-content {
+            margin-left: 280px;
+            padding: 2rem;
+            margin-top: 70px;
+        }
+
+        .dashboard-title {
+            color: var(--text);
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+        }
+
+        .controls-container {
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .request-types {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .request-btn {
+            padding: 0.75rem 2rem;
+            border-radius: 0.5rem;
+            border: none;
+            background: var(--background);
+            color: var(--text);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .request-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .filters {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .search-box, .date-filter {
+            flex: 1;
+        }
+
+        .search-box input, .date-filter input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .search-box input:focus, .date-filter input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px var(--accent);
+        }
+
+        .request-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--card-bg);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            display: none;
+        }
+
+        .request-table.active {
+            display: table;
+        }
+
+        .request-table thead {
+            background: var(--primary);
+            color: white;
+        }
+
+        .request-table th,
+        .request-table td {
+            padding: 1rem;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .request-table tbody tr:hover {
+            background: var(--accent);
+        }
+
+        .status {
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-weight: 500;
+            display: inline-block;
+        }
+
+        .status.accepted {
+            background: #dcfce7;
+            color: var(--success);
+        }
+
+        .status.declined {
+            background: #fee2e2;
+            color: var(--error);
+        }
+        
+        /* Status Badge Styles */
+	    .status-badge {
+	      padding: 0.5rem 1rem;
+	      border-radius: 9999px;
+	      font-weight: 600;
+	      display: inline-block;
+	      color: #fff;
+	    }
+	    
+	    .status-accepted {
+	      background: var(--success);
+	    }
+	    
+	    .status-rejected {
+	      background: var(--danger);
+	    }
+	    
+	    .status-pending {
+	      background: var(--warning);
+	    }
+
+        .action-btn {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 0 0.25rem;
+            text-decoration: none;
+        }
+
+        .accept-btn {
+            background: var(--success);
+            color: white;
+        }
+
+        .decline-btn {
+            background: var(--error);
+            color: white;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 2rem;
+        }
+
+        .page-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border);
+            background: var(--card-bg);
+            color: var(--text);
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .page-btn:hover:not(.active) {
+            background: var(--accent);
+        }
+
+        .page-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 70px;
+            }
+            
+            .menu-item span {
+                display: none;
+            }
+            
+            .main-content {
+                margin-left: 70px;
+                padding: 1rem;
+            }
+
+            .controls-container {
+                flex-direction: column;
+            }
+
+            .filters {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .request-types {
+                width: 100%;
+            }
+
+            .request-btn {
+                flex: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fas fa-heartbeat"></i>
+            <span>BloodCare</span>
+        </div>
+        <div class="user-info">
+            <span class="user-email" th:text="${loggedAdminName}">admin@bloodcare.com</span>
+      		<a th:href="@{/adminLogout}" class="logout-btn">Logout</a>
+        </div>
+    </nav>
+
+    <aside class="sidebar">
+        <a th:href="@{/adminDashboard}" class="menu-item">
+            <i class="fas fa-home"></i>
+            <span>Dashboard</span>
+        </a>
+        <a th:href="@{/adminBloodRequests}" class="menu-item">
+            <i class="fas fa-clipboard-list"></i>
+            <span>Blood Requests</span>
+        </a>
+        <a th:href="@{/adminBloodDonationsRequests}" class="menu-item">
+            <i class="fas fa-clipboard-list"></i>
+            <span>Donate Requests</span>
+        </a>
+        <a th:href="@{/bloodHistory/active}" class="menu-item active">
+            <i class="fas fa-hospital-user"></i>
+            <span>Requests History</span>
+        </a>
+        <a th:href="@{/adminManagesUsers}" class="menu-item">
+            <i class="fas fa-users"></i>
+            <span>Manage Users</span>
+        </a>
+    </aside>
+
+    <main class="main-content">
+        <h1 class="dashboard-title">Requests History</h1>
+
+        <div class="controls-container">
+            <div class="request-types">
+                <a th:href="@{/bloodHistory/active}" th:classappend="'request-btn ' + (${mode1} ? 'active' : '')">Blood Requests</a>
+                <a th:href="@{/bloodHistory/none}" th:classappend="'request-btn ' + (${mode2} ? 'active' : '')">Donation Requests</a>
+            </div>
+        </div>
+
+        <table th:classappend="'request-table ' + (${mode1} ? 'active' : '')" id="bloodTable" th:if="${mode1}">
+            <thead>
+                <tr>
+                    <th>NAME</th>
+                    <th>MOBILE NO</th>
+                    <th>GENDER</th>
+                    <th>BLOOD GROUP</th>
+                    <th>AGE</th>
+                    <th>DISEASE</th>
+                    <th>REQUIRED UNITS</th>
+                    <th>REQUEST DATE</th>
+                    <th>STATUS</th>
+                    <th>ACTION</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+		        <tr th:each = "request : ${pendingBloodRequests}">
+		          <td th:text="${request.name}">Gowtham</td>
+		          <td th:text="${request.mobile}">9698382306</td>
+		          <td th:text="${request.gender}">Male</td>
+		          <td th:text="${request.bloodGroup}">O+ve</td>
+		          <td th:text="${request.age}">25</td>
+		          <td th:text="${request.patientDiease}">Skin Disease</td>
+		          <td th:text="${request.unitsRequested}">1</td>
+		          <td th:text="${request.requestDate}">2024-02-09</td>
+		          <td>
+		               <span th:class="'status-badge ' + ${request.status == 'Accepted' ? 'status-accepted' : request.status == 'Rejected' ? 'status-rejected' : 'status-pending'}"
+		                     th:text="${request.status}"></span>
+		           </td>
+		          <td>
+		            <a th:href="@{/admin/requests/delete/{requestId}(requestId=${request.reqId})}" class="action-btn decline-btn">Delete</a>
+		          </td>
+		        </tr>
+		      </tbody>
+        </table>
+
+        <table th:classappend="'request-table ' + (${mode2} ? 'active' : '')" id="donateTable" th:if="${mode2}">
+            <thead>
+                <tr>
+                    <th>NAME</th>
+                    <th>MOBILE NO</th>
+                    <th>GENDER</th>
+                    <th>BLOOD GROUP</th>
+                    <th>CITY</th>
+                    <th>AGE</th>
+                    <th>UNITS OF BLOOD</th>
+                    <th>REQUEST DATE</th>
+                    <th>STATUS</th>
+                    <th>ACTION</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+	        <tr th:each = "donation : ${pendingBloodDonations}">
+	          <td th:text="${donation.name}">Gowtham</td>
+	          <td th:text="${donation.mobile}">9698382306</td>
+	          <td th:text="${donation.gender}">Male</td>
+	          <td th:text="${donation.bloodGroup}">O+ve</td>
+	          <td th:text="${donation.city}">Rajampet</td>
+	          <td th:text="${donation.age}">25</td>
+	          <td th:text="${donation.unitsDonated}">1</td>
+	          <td th:text="${donation.donationDate}">2024-02-09</td>
+	          <td>
+	               <span th:class="'status-badge ' + ${donation.status == 'Accepted' ? 'status-accepted' : donation.status == 'Rejected' ? 'status-rejected' : 'status-pending'}"
+	                     th:text="${donation.status}"></span>
+	           </td>
+	          <td >
+				<a th:href="@{/admin/donations/decline/{donationId}(donationId=${donation.donationId})}" class="action-btn decline-btn">Delete</a>
+	          </td>
+	        </tr>
+	        
+	      </tbody>
+        </table>
+    </main>
+    
+</body>
+</html>
